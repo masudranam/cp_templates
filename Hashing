@@ -1,17 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define print(a) for(auto x:a)cout<<x<<' ';cout<<'\n';
-#define debug(x) cout<<#x<<" "<<x<<endl
-#define all(a) (a).begin(),(a).end()
-#define sz(a) (int)(a.size())
-#define int   long long int
-#define endl '\n'
-#define ar array
- 
 const int M = 1e9 + 7;
-const int N = 2e5 + 10;
-
 
 struct Hash {
     string  s;
@@ -21,7 +11,7 @@ struct Hash {
 
     Hash(string s1) {
         s=s1;
-        this->len=sz(s);
+        this->len = s.size();
         pw = hF = hR = vector<int>(len+5,0);
         pw1 = hF1 = hR1 = vector<int>(len+5,0);
     }
@@ -55,7 +45,6 @@ struct Hash {
         return (hashF(l, r) == hashR(l, r));
     }
 
-
     void Calc1() {
         pw1[0] = 1;
         hF1[0] = hR1[len + 1] = 0;
@@ -74,7 +63,7 @@ struct Hash {
         }
     }
 
-    ar<int, 2> hashF1 (int l, int r) {
+    array<int, 2> hashF1 (int l, int r) {
         int val1 = hF1[r] - (hF1[l - 1] * pw1[r - l + 1]) % M;
         int val2 = hF[r] - (hF[l - 1] * pw[r - l + 1]) % M;
         if (val1 < 0) val1 += M;
@@ -82,7 +71,7 @@ struct Hash {
         return {val1, val2};
     }
 
-    ar<int, 2> hashR1 (int l, int r) {
+    array<int, 2> hashR1 (int l, int r) {
         int val1 = hR1[l] - (hR1[r + 1] * pw1[r - l + 1]) % M;
         int val2 = hR[l] - (hR[r + 1] * pw[r - l + 1]) % M;
         if (val1 < 0) val1 += M;
@@ -97,7 +86,8 @@ struct Hash {
 };
 
 void solve(){
-
+   string s = "abc";
+   Hash H(s);
 }
 
 signed main() {
@@ -111,4 +101,3 @@ signed main() {
    }
    return 0;
 }
-
