@@ -28,7 +28,6 @@ vector<int> g[N], cut_vertex;
     cut_vertex.push_back(u);
    }
  }
-
 void solve(){
 
 }
