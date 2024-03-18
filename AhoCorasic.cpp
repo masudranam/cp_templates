@@ -96,7 +96,7 @@ signed main() {
    int t = 1;  // cin >> t;
    for (int tc = 1; tc <= t; tc++) {
       //cout<<"Case "<<tc<<": ";
-      solve();
+     // solve();
    }
    return 0;
 }
