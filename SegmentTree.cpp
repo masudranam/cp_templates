@@ -97,6 +97,51 @@ struct ST {
     }    
 };
 
+int tree[4 * N];
+int lazy[4 * N];
+void build(int i, int l, int r){
+    if(l == r)tree[i] = l, lazy[i] = 0;
+    else{
+        int m = (l + r) / 2;
+        build(2 * i, l, m);
+        build(2 * i + 1, m + 1, r);
+        tree[i] = min(tree[2 * i], tree[2 * i + 1]);
+        lazy[i] = 0;
+    }
+}
+
+void prop(int x, int lx, int rx) {
+  if (lx == rx || lazy[x] == 0) return;
+  lazy[x << 1] += lazy[x];
+  lazy[x << 1 | 1] += lazy[x];
+  tree[x << 1] += lazy[x];
+  tree[x << 1 | 1] += lazy[x];
+  lazy[x] = 0;
+}
+void update(int x, int lx, int rx, int l, int r, int v) {
+  prop(x, lx, rx);
+  if (lx > r || l > rx) return;
+  if (l <= lx && r >= rx) {
+    tree[x] += v;
+    lazy[x] += v;
+    return;
+  }
+  int mx = (lx + rx) >> 1;
+  update(x << 1, lx, mx, l, r, v);
+  update(x << 1 | 1, mx + 1, rx, l, r, v);
+  tree[x] = min(tree[x << 1], tree[x << 1 | 1]);
+}
+
+int query(int x, int lx, int rx, int l, int r) {
+    prop(x, lx, rx);
+    if( l<= lx && r <= rx) return tree[x];
+    if(rx < l || r < lx) return 1;
+    int m = (lx + rx) / 2;
+    int a = query(x * 2, lx , m, l, r);
+    int b = query(x * 2 + 1, m + 1 , rx,  l, r);
+    return min(a, b);
+}
+
 void solve(){
    ST st(100);
 }
