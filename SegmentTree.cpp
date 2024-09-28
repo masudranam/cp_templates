@@ -3,10 +3,11 @@ using namespace std;
 
 const int M = 1e9 + 7;
 
+
 struct node {
     int mn,s,mx,lz;
-    node(){
-        mx = -M, mn = M, s = 0, lz = -1;
+    node(int x = 0){
+        mx = -M, mn = M, s = x, lz = 0;
     }
 };
 
@@ -19,13 +20,13 @@ struct ST {
 
     node Merge(node a, node b){
         node res;
-        res.s = a.s + b.s;
+        res.s = min(a.s , b.s);
         return res;
     }
 
     void upd(int L,int x,int i,int l,int r) {
         if(l==r) {
-            t[i].s = x;
+            t[i].s += x;
             return;
         }
         int m = (l+r)/2;
@@ -52,21 +53,20 @@ struct ST {
     }
 
      void prop(int i, int l, int r){
-        if(t[i].lz != -1){  
-            t[i].s = t[i].lz * (r - l + 1);
-            if(l != r){
-                t[2*i].lz = t[2*i + 1].lz = t[i].lz;
-            }
-            t[i].lz = -1;
-        }       
-    }
+         if(l == r || t[i].lz == 0) return;  
+         t[2 * i].s += t[i].lz;
+         t[2 * i].lz += t[i].lz;
+         t[2 * i + 1].s += t[i].lz;
+         t[2 * i + 1].lz += t[i].lz;
+         t[i].lz = 0;  
+     }
 
     void upd1(int L, int R, int x, int i, int l, int r) {
         prop(i,l,r);
         if(L > r || R < l || l > r) return;
         if(L <= l && r <= R) {
-            t[i].lz = x;
-            prop(i,l,r);
+            t[i].lz += x;
+            t[i].s += x;
             return;
         }
         int m=(l+r)/2;
@@ -81,7 +81,7 @@ struct ST {
 
     node qry1(int L, int R, int i, int l, int r) {
         prop(i,l,r);
-        if(L > r || R < l || l > r) return node();
+        if(L > r || R < l || l > r) return node(1);
         if(L<=l && r<=R){
             return t[i];
         }
