@@ -7,7 +7,6 @@ using namespace std;
 const int M = 1e9 + 7;
 const int N = 2e5 + 10;
 
-
 const double eps = 1e-9;
 const double PI = acos(-1.0);
 
@@ -108,12 +107,12 @@ P PAlongLine(P a, P b, double d){
 }
 
 //Projects the P 'c' onto line through 'a' and 'b' (assuming a != b)
-P ProjectPToLine(P a, P b, P c){
+P ProjectPoLine(P a, P b, P c){
     return a+(b-a)*dot(c-a, b-a)/dot(b-a, b-a);
 }
 
 //Projects P 'c' onto the line segment through 'a' and 'b'
-P ProjectPToSegment(P a, P b, P c){
+P ProjectPoSegment(P a, P b, P c){
     double r=dot(b-a,b-a);
     if(fabs(r)<eps) return a;
     r=dot(c-a, b-a)/r;
@@ -123,8 +122,8 @@ P ProjectPToSegment(P a, P b, P c){
 }
 
 //Computes distance from 'c' to the line segment between 'a' and 'b'
-double DistanceFromPToSegment(P a, P b, P c){
-    return dist(c, ProjectPToSegment(a, b, c));
+double DistanceFromPoSegment(P a, P b, P c){
+    return dist(c, ProjectPoSegment(a, b, c));
 }
  
 //Computes minimum distance from a P 'p' to a line 'AB'
@@ -256,9 +255,7 @@ bool PInside(const P &p, const vector<P> &Ps) {
 
     for(int i = 0; i < n; i++) {
         int j = (i+1)%n;
-        if((p.y < Ps[i].y != p.y < Ps[j].y)
-                && (p.x < Ps[i].x + (Ps[j].x -
-                                         Ps[i].x)*(p.y-Ps[i].y)/(Ps[j].y-Ps[i].y)))
+        if((p.y < Ps[i].y != p.y < Ps[j].y) && (p.x < Ps[i].x + (Ps[j].x - Ps[i].x)*(p.y-Ps[i].y)/(Ps[j].y-Ps[i].y)))
             ok = !ok;
     }
     return ok;
@@ -268,32 +265,8 @@ bool ccw(P p, P q, P r) {
     return cross(q-p,r-p) < eps;
 }
 
-//Return the Ps of the convex polygon
-vector<P> Convex_Hull(vector<P> Ps) {
-    int n = Ps.size();
-    sort(Ps.begin(), Ps.end());
-    vector<P> hull;
-    for(int rep = 0; rep < 2; rep++) {
-        int s = hull.size();
-        for(int i = 0; i < n; i++) {
-            while((int)hull.size() >= s + 2) {
-                P A = hull.end()[-2];
-                P B = hull.end()[-1];
-                P C = Ps[i];
-                if(cross2(A,B,C) <= 0)
-                    break;
-                hull.pop_back();
-            }
-            hull.push_back(Ps[i]);
-        }
-        hull.pop_back(); // comment this line if necessary
-        reverse(Ps.begin(), Ps.end());
-    }
-    return hull;
-}
 
-
-Line PToLine(P a, P b) {
+Line PoLine(P a, P b) {
     Line l;
     if(fabs(a.x-b.x) < eps)
         l.a = 1.0, l.b = 0.0, l.c = -a.x;
@@ -353,6 +326,63 @@ P closestP(Line l, P p) { //Perpendicular to l and pass through p
     return r;
 }
 
+bool onleft(P a, P b, P x) { return sign(cross(b-a, x-a)) > 0; }
+
+//Return the Ps of the convex polygon
+vector<P> Convex_Hull(vector<P> Ps) {
+    int n = Ps.size();
+    sort(Ps.begin(), Ps.end());
+    vector<P> hull;
+    for(int rep = 0; rep < 2; rep++) {
+        int s = hull.size();
+        for(int i = 0; i < n; i++) {
+            while((int)hull.size() >= s + 2) {
+                P A = hull.end()[-2];
+                P B = hull.end()[-1];
+                P C = Ps[i];
+                if(cross2(A,B,C) <= 0)
+                    break;
+                hull.pop_back();
+            }
+            hull.push_back(Ps[i]);
+        }
+        hull.pop_back(); // comment this line if necessary
+        reverse(Ps.begin(), Ps.end());
+    }
+    return hull;
+}
+
+pair<vector<P>, vector<P>> convexHull(vector<P> Ps) {
+  sort(Ps.begin(), Ps.end());
+  vector<P> ret;
+  for (auto &p : Ps) {
+    while (ret.size() > 1 && !onleft(ret[ret.size()-2], ret[ret.size()-1], p)) {
+      ret.pop_back();
+    }
+    ret.emplace_back(p);
+  }
+  reverse(Ps.begin(), Ps.end());
+  auto fix = ret.size();
+  for (auto &&p : Ps) {
+    while (ret.size() > fix
+        && !onleft(ret[ret.size()-2], ret[ret.size()-1], p)) {
+      ret.pop_back();
+    }
+    ret.emplace_back(p);
+  }
+  ret.pop_back();
+  if (ret.size() <= 2) { return {}; }
+  vector<P> uph, dnh;
+  for (int i = 0; i < fix; ++i) {
+    dnh.emplace_back(ret[i]);
+  }
+  uph.emplace_back(dnh.back());
+  for (int i = fix; i < ret.size(); ++i) {
+    uph.emplace_back(ret[i]);
+  }
+  uph.emplace_back(dnh.front());
+  return {dnh, uph};
+}
 
 void solve(){
    
