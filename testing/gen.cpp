@@ -17,7 +17,6 @@ inline int random(int l, int r) {
 	return uniform_int_distribution<int>(l, r)(rng);
 }
 
-
 void solve(){
 		int n = random(1,10);
 		
