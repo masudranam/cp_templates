@@ -18,15 +18,12 @@ inline int random(int l, int r) {
 }
 
 void solve(){
-		int n = random(1,10);
-		
-		cout << n <<endl;
-		for(int i = 0; i < n; i++){
-			cout << random(1,10) <<' ';
-		}
-		cout << endl;
+		int n = random(500, 500);
+      cout << n <<'\n';
+      for(int i = 0; i < n; i++){
+         cout << random(10000, 300000) <<' ';
+      }
 
-		
 }
 
 signed main() {
